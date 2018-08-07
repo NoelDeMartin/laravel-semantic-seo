@@ -3,17 +3,15 @@
 namespace Testing;
 
 use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Facade;
 use NoelDeMartin\SemanticSEO\SemanticSEO;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use NoelDeMartin\SemanticSEO\Support\Facades\SemanticSEO as Facade;
 
 class TestCase extends BaseTestCase
 {
     public function setUp()
     {
         $this->faker = Faker::create();
-        Facade::setFacadeApplication([
-            'semantic-seo' => new SemanticSEO,
-        ]);
+        Facade::swap(new SemanticSEO);
     }
 }
