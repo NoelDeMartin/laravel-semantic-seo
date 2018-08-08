@@ -92,14 +92,9 @@ class MetaTagsTests extends TestCase
 
         SemanticSEO::twitter(compact('card', 'creator'));
 
-        $this->assertContains(
-            "<meta name=\"twitter:card\" content=\"$card\" />",
-            SemanticSEO::render()
-        );
-        $this->assertContains(
-            "<meta name=\"twitter:creator\" content=\"$creator\" />",
-            SemanticSEO::render()
-        );
+        $html = SemanticSEO::render();
+        $this->assertContains("<meta name=\"twitter:card\" content=\"$card\" />", $html);
+        $this->assertContains("<meta name=\"twitter:creator\" content=\"$creator\" />", $html);
     }
 
     public function test_render_open_graph()
@@ -109,13 +104,8 @@ class MetaTagsTests extends TestCase
 
         SemanticSEO::openGraph(compact('title', 'url'));
 
-        $this->assertContains(
-            "<meta property=\"og:title\" content=\"$title\" />",
-            SemanticSEO::render()
-        );
-        $this->assertContains(
-            "<meta property=\"og:url\" content=\"$url\" />",
-            SemanticSEO::render()
-        );
+        $html = SemanticSEO::render();
+        $this->assertContains("<meta property=\"og:title\" content=\"$title\" />", $html);
+        $this->assertContains("<meta property=\"og:url\" content=\"$url\" />", $html);
     }
 }

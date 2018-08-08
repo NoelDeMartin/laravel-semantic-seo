@@ -28,6 +28,10 @@ class SemanticSEO
 
     public function render()
     {
+        foreach ($this->types as $type) {
+            $type->beforeRender($this);
+        }
+
         $html = '';
         $meta = $this->meta;
 

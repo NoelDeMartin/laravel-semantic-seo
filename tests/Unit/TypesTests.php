@@ -17,6 +17,8 @@ class TypesTests extends TestCase
             ->name($name)
             ->description($description);
 
+        $html = SemanticSEO::render();
+
         $this->assertContains(
             '<script type="application/ld+json">' .
                 json_encode([
@@ -26,7 +28,9 @@ class TypesTests extends TestCase
                     '@type' => 'Thing',
                 ]) .
             '</script>',
-            SemanticSEO::render()
+            $html
         );
+        $this->assertContains("<title>$name</title>", $html);
+        $this->assertContains("<meta name=\"description\" content=\"$description\" />", $html);
     }
 }

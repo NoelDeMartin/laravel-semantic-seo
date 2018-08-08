@@ -7,19 +7,12 @@ use NoelDeMartin\SemanticSEO\SemanticSEO;
 
 class Thing
 {
-    protected $seo;
-
     protected $attributes = [];
 
     protected $attributeTypes = [
         'name' => 'text',
         'description' => 'text',
     ];
-
-    public function __construct(SemanticSEO $seo)
-    {
-        $this->seo = $seo;
-    }
 
     public function setAttribute($attribute, $value)
     {
@@ -35,6 +28,17 @@ class Thing
         }
 
         return $this;
+    }
+
+    public function beforeRender(SemanticSEO $seo)
+    {
+        $seo->meta(
+            $this->fillAttributeValues([
+                'title' => 'name',
+                'description' => 'description',
+            ]),
+            false
+        );
     }
 
     public function render()
@@ -62,6 +66,19 @@ class Thing
             '@context' => 'http://schema.org',
             '@type' => 'Thing',
         ]);
+    }
+
+    protected function fillAttributeValues($attributes)
+    {
+        $values = [];
+
+        foreach ($attributes as $key => $attribute) {
+            if (isset($this->attributes[$attribute])) {
+                $values[$key] = $this->attributes[$attribute];
+            }
+        }
+
+        return $values;
     }
 
     public function __call($method, $parameters)
