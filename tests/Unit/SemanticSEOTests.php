@@ -10,10 +10,11 @@ class SemanticSEOTests extends TestCase
     public function test_render_title()
     {
         $title = $this->faker->sentence;
+        $suffix = $this->faker->word;
 
-        SemanticSEO::title($title);
+        SemanticSEO::title($title)->titleSuffix($suffix);
 
-        $this->assertEquals("<title>$title</title>", SemanticSEO::render());
+        $this->assertEquals("<title>{$title}{$suffix}</title>", SemanticSEO::render());
     }
 
     public function test_render_description()

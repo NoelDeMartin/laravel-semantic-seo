@@ -7,6 +7,11 @@ use InvalidArgumentException;
 class SemanticSEO
 {
     /**
+     * Meta fields that are handled specially and should not be auto-generated.
+     */
+    protected $reservedMeta = ['title', 'title_prefix', 'title_suffix'];
+
+    /**
      * Meta field values.
      */
     protected $meta = [];
@@ -17,8 +22,13 @@ class SemanticSEO
         $meta = $this->meta;
 
         if (isset($meta['title'])) {
-            $html .= '<title>' . $meta['title'] . '</title>';
-            unset($meta['title']);
+            $titlePrefix = isset($meta['title_prefix']) ? $meta['title_prefix'] : '';
+            $titleSuffix = isset($meta['title_suffix']) ? $meta['title_suffix'] : '';
+            $html .= '<title>' . $titlePrefix . $meta['title'] . $titleSuffix . '</title>';
+        }
+
+        foreach ($this->reservedMeta as $field) {
+            unset($meta[$field]);
         }
 
         foreach ($meta as $field => $value) {
@@ -38,16 +48,22 @@ class SemanticSEO
 
     public function title(string $title)
     {
-        $this->meta['title'] =  $title;
+        return $this->meta('title', $title);
+    }
 
-        return $this;
+    public function titlePrefix($prefix)
+    {
+        return $this->meta('title_prefix', $prefix);
+    }
+
+    public function titleSuffix($suffix)
+    {
+        return $this->meta('title_suffix', $suffix);
     }
 
     public function description(string $description)
     {
-        $this->meta['description'] =  $description;
-
-        return $this;
+        return $this->meta('description', $description);
     }
 
     public function hide()
