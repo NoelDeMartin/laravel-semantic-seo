@@ -83,4 +83,20 @@ class SemanticSEOTests extends TestCase
 
         $this->assertNotContains('<link rel="canonical" href="', SemanticSEO::render());
     }
+
+    public function test_render_twitter()
+    {
+        $card = 'summary';
+        $creator = '@' . $this->faker->word;
+
+        SemanticSEO::twitter(compact('card', 'creator'));
+        $this->assertContains(
+            "<meta name=\"twitter:card\" content=\"$card\" />",
+            SemanticSEO::render()
+        );
+        $this->assertContains(
+            "<meta name=\"twitter:creator\" content=\"$creator\" />",
+            SemanticSEO::render()
+        );
+    }
 }

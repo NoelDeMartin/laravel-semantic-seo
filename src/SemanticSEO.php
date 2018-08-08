@@ -88,6 +88,20 @@ class SemanticSEO
         return $this->meta('robots', 'noindex, nofollow');
     }
 
+    public function twitter($fields, $override = true)
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields => $override];
+            $override = func_num_args() > 2 ? func_get_arg(2) : true;
+        }
+
+        foreach ($fields as $field => $value) {
+            $this->meta('twitter:' . $field, $value, $override);
+        }
+
+        return $this;
+    }
+
     public function meta($fields, $override = true)
     {
         if (!is_array($fields)) {
