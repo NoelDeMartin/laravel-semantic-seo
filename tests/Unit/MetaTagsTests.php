@@ -3,9 +3,10 @@
 namespace Testing\Unit;
 
 use Testing\TestCase;
+use Illuminate\Support\Facades\URL;
 use NoelDeMartin\SemanticSEO\Support\Facades\SemanticSEO;
 
-class SemanticSEOTests extends TestCase
+class MetaTagsTests extends TestCase
 {
     public function test_render_title()
     {
@@ -69,10 +70,10 @@ class SemanticSEOTests extends TestCase
 
     public function test_render_canonical_default()
     {
-        $url = $this->url;
+        $url = URL::current();
 
         $this->assertContains(
-            "<link rel=\"canonical\" href=\"{$url}\" />",
+            "<link rel=\"canonical\" href=\"$url\" />",
             SemanticSEO::render()
         );
     }

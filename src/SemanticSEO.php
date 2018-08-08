@@ -4,6 +4,7 @@ namespace NoelDeMartin\SemanticSEO;
 
 use InvalidArgumentException;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\App;
 
 class SemanticSEO
 {
@@ -19,6 +20,11 @@ class SemanticSEO
      * Meta field values.
      */
     protected $meta = [];
+
+    /**
+     * Types.
+     */
+    protected $types = [];
 
     public function render()
     {
@@ -61,6 +67,10 @@ class SemanticSEO
                 $content = $value['content'];
                 $html .= "content=\"$content\" />";
             }
+        }
+
+        foreach ($this->types as $type) {
+            $html .= $type->render();
         }
 
         return $html;
@@ -146,5 +156,16 @@ class SemanticSEO
         }
 
         return $this;
+    }
+
+    public function is($type)
+    {
+        if (is_string($type)) {
+            $type = App::make($type);
+        }
+
+        $this->types[] = $type;
+
+        return $type;
     }
 }
