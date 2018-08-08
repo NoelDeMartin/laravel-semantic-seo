@@ -27,4 +27,20 @@ class SemanticSEOTests extends TestCase
             SemanticSEO::render()
         );
     }
+
+    public function test_render_custom_meta()
+    {
+        $content = $this->faker->sentence;
+        $name = $this->faker->word;
+        $nameAttribute = $this->faker->word;
+
+        SemanticSEO::meta([
+            $name => compact('nameAttribute', 'content'),
+        ]);
+
+        $this->assertEquals(
+            "<meta $nameAttribute=\"$name\" content=\"$content\" />",
+            SemanticSEO::render()
+        );
+    }
 }
