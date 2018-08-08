@@ -50,6 +50,11 @@ class SemanticSEO
         return $this;
     }
 
+    public function hide()
+    {
+        return $this->meta('robots', 'noindex, nofollow');
+    }
+
     public function meta($fields, $override = true)
     {
         if (!is_array($fields)) {
@@ -62,5 +67,7 @@ class SemanticSEO
                 $this->meta[$field] = $value;
             }
         }
+
+        return $this;
     }
 }

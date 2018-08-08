@@ -43,4 +43,14 @@ class SemanticSEOTests extends TestCase
             SemanticSEO::render()
         );
     }
+
+    public function test_hide()
+    {
+        SemanticSEO::hide();
+
+        $this->assertEquals(
+            '<meta name="robots" content="noindex, nofollow" />',
+            SemanticSEO::render()
+        );
+    }
 }
