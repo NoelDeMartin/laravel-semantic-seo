@@ -14,7 +14,7 @@ class SemanticSEOTests extends TestCase
 
         SemanticSEO::title($title)->titleSuffix($suffix);
 
-        $this->assertEquals("<title>{$title}{$suffix}</title>", SemanticSEO::render());
+        $this->assertContains("<title>{$title}{$suffix}</title>", SemanticSEO::render());
     }
 
     public function test_render_description()
@@ -23,7 +23,7 @@ class SemanticSEOTests extends TestCase
 
         SemanticSEO::description($description);
 
-        $this->assertEquals(
+        $this->assertContains(
             "<meta name=\"description\" content=\"$description\" />",
             SemanticSEO::render()
         );
@@ -39,19 +39,48 @@ class SemanticSEOTests extends TestCase
             $name => compact('nameAttribute', 'content'),
         ]);
 
-        $this->assertEquals(
+        $this->assertContains(
             "<meta $nameAttribute=\"$name\" content=\"$content\" />",
             SemanticSEO::render()
         );
     }
 
-    public function test_hide()
+    public function test_render_hide()
     {
         SemanticSEO::hide();
 
-        $this->assertEquals(
+        $this->assertContains(
             '<meta name="robots" content="noindex, nofollow" />',
             SemanticSEO::render()
         );
+    }
+
+    public function test_render_canonical()
+    {
+        $url = $this->faker->url;
+
+        SemanticSEO::canonical($url);
+
+        $this->assertContains(
+            "<link rel=\"canonical\" href=\"$url\" />",
+            SemanticSEO::render()
+        );
+    }
+
+    public function test_render_canonical_default()
+    {
+        $url = $this->url;
+
+        $this->assertContains(
+            "<link rel=\"canonical\" href=\"{$url}\" />",
+            SemanticSEO::render()
+        );
+    }
+
+    public function test_render_canonical_disabled()
+    {
+        SemanticSEO::canonical(false);
+
+        $this->assertNotContains('<link rel="canonical" href="', SemanticSEO::render());
     }
 }

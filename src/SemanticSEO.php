@@ -3,13 +3,17 @@
 namespace NoelDeMartin\SemanticSEO;
 
 use InvalidArgumentException;
+use Illuminate\Support\Facades\URL;
 
 class SemanticSEO
 {
     /**
      * Meta fields that are handled specially and should not be auto-generated.
      */
-    protected $reservedMeta = ['title', 'title_prefix', 'title_suffix'];
+    protected $reservedMeta = [
+        'title', 'title_prefix', 'title_suffix',
+        'canonical',
+    ];
 
     /**
      * Meta field values.
@@ -25,6 +29,14 @@ class SemanticSEO
             $titlePrefix = isset($meta['title_prefix']) ? $meta['title_prefix'] : '';
             $titleSuffix = isset($meta['title_suffix']) ? $meta['title_suffix'] : '';
             $html .= '<title>' . $titlePrefix . $meta['title'] . $titleSuffix . '</title>';
+        }
+
+        if (isset($meta['canonical'])) {
+            if (is_string($meta['canonical'])) {
+                $html .= '<link rel="canonical" href="' . $meta['canonical'] . '" />';
+            }
+        } else {
+            $html .= '<link rel="canonical" href="' . URL::current() . '" />';
         }
 
         foreach ($this->reservedMeta as $field) {
@@ -51,14 +63,19 @@ class SemanticSEO
         return $this->meta('title', $title);
     }
 
-    public function titlePrefix($prefix)
+    public function titlePrefix(string $prefix)
     {
         return $this->meta('title_prefix', $prefix);
     }
 
-    public function titleSuffix($suffix)
+    public function titleSuffix(string $suffix)
     {
         return $this->meta('title_suffix', $suffix);
+    }
+
+    public function canonical($url)
+    {
+        return $this->meta('canonical', $url);
     }
 
     public function description(string $description)
