@@ -33,14 +33,14 @@ class SemanticSEOTests extends TestCase
     {
         $content = $this->faker->sentence;
         $name = $this->faker->word;
-        $nameAttribute = $this->faker->word;
+        $property = $this->faker->word;
 
         SemanticSEO::meta([
-            $name => compact('nameAttribute', 'content'),
+            $name => compact('property', 'content'),
         ]);
 
         $this->assertContains(
-            "<meta $nameAttribute=\"$name\" content=\"$content\" />",
+            "<meta name=\"$name\" property=\"$property\" content=\"$content\" />",
             SemanticSEO::render()
         );
     }
@@ -90,12 +90,30 @@ class SemanticSEOTests extends TestCase
         $creator = '@' . $this->faker->word;
 
         SemanticSEO::twitter(compact('card', 'creator'));
+
         $this->assertContains(
             "<meta name=\"twitter:card\" content=\"$card\" />",
             SemanticSEO::render()
         );
         $this->assertContains(
             "<meta name=\"twitter:creator\" content=\"$creator\" />",
+            SemanticSEO::render()
+        );
+    }
+
+    public function test_render_open_graph()
+    {
+        $title = $this->faker->sentence;
+        $url = $this->faker->url;
+
+        SemanticSEO::openGraph(compact('title', 'url'));
+
+        $this->assertContains(
+            "<meta property=\"og:title\" content=\"$title\" />",
+            SemanticSEO::render()
+        );
+        $this->assertContains(
+            "<meta property=\"og:url\" content=\"$url\" />",
             SemanticSEO::render()
         );
     }

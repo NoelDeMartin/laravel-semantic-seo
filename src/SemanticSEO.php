@@ -47,11 +47,19 @@ class SemanticSEO
             if (is_string($value)) {
                 $html .= "<meta name=\"$field\" content=\"$value\" />";
             } else {
-                $nameAttribute = isset($value['nameAttribute'])
-                    ? $value['nameAttribute']
-                    : 'name';
+                $name = isset($value['name']) ? $value['name'] : $field;
+                $property = isset($value['property']) ? $value['property'] : false;
+                $html .= '<meta ';
+                if ($name) {
+                    $html .= "name=\"$name\" ";
+                }
+
+                if ($property) {
+                    $html .= "property=\"$property\" ";
+                }
+
                 $content = $value['content'];
-                $html .= "<meta $nameAttribute=\"$field\" content=\"$content\" />";
+                $html .= "content=\"$content\" />";
             }
         }
 
@@ -97,6 +105,28 @@ class SemanticSEO
 
         foreach ($fields as $field => $value) {
             $this->meta('twitter:' . $field, $value, $override);
+        }
+
+        return $this;
+    }
+
+    public function openGraph($fields, $override = true)
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields => $override];
+            $override = func_num_args() > 2 ? func_get_arg(2) : true;
+        }
+
+        foreach ($fields as $field => $value) {
+            $this->meta(
+                'og:' . $field,
+                [
+                    'name' => false,
+                    'property' => 'og:' . $field,
+                    'content' => $value,
+                ],
+                $override
+            );
         }
 
         return $this;
