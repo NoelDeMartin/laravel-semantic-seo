@@ -76,7 +76,7 @@ class Thing
         $values = [];
 
         foreach ($attributes as $attribute => $target) {
-            if (isset($this->attributes[$attribute])) {
+            if (array_key_exists($attribute, $this->attributes)) {
                 $values[$target] = $this->attributes[$attribute];
             }
         }
@@ -102,7 +102,7 @@ class Thing
 
     public function __call($method, $parameters)
     {
-        if (isset($this->attributeDefinitions[$method])) {
+        if (array_key_exists($method, $this->attributeDefinitions)) {
             $this->setAttribute($method, ...$parameters);
 
             return $this;

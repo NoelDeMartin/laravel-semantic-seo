@@ -66,4 +66,14 @@ class TypesTests extends TestCase
         $this->assertContains("<link rel=\"canonical\" href=\"$url\" />", $html);
         $this->assertContains("<meta name=\"description\" content=\"$description\" />", $html);
     }
+
+    public function test_disable_automatically_filled_meta()
+    {
+        $name = $this->faker->name;
+
+        SemanticSEO::meta('title', null);
+        SemanticSEO::is(Thing::class)->name($name);
+
+        $this->assertNotContains("<title>$name</title>", SemanticSEO::render());
+    }
 }

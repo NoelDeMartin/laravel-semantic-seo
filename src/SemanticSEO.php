@@ -43,13 +43,13 @@ class SemanticSEO
         $html = '';
         $meta = $this->meta;
 
-        if (isset($meta['title'])) {
-            $titlePrefix = isset($meta['title_prefix']) ? $meta['title_prefix'] : '';
-            $titleSuffix = isset($meta['title_suffix']) ? $meta['title_suffix'] : '';
+        if (array_key_exists('title', $meta) && !is_null($meta['title'])) {
+            $titlePrefix = array_key_exists('title_prefix', $meta) ? $meta['title_prefix'] : '';
+            $titleSuffix = array_key_exists('title_suffix', $meta) ? $meta['title_suffix'] : '';
             $html .= '<title>' . $titlePrefix . $meta['title'] . $titleSuffix . '</title>';
         }
 
-        if (isset($meta['canonical'])) {
+        if (array_key_exists('canonical', $meta)) {
             if (is_string($meta['canonical'])) {
                 $html .= '<link rel="canonical" href="' . $meta['canonical'] . '" />';
             }
@@ -64,9 +64,9 @@ class SemanticSEO
         foreach ($meta as $field => $value) {
             if (is_string($value)) {
                 $html .= "<meta name=\"$field\" content=\"$value\" />";
-            } else {
-                $name = isset($value['name']) ? $value['name'] : $field;
-                $property = isset($value['property']) ? $value['property'] : false;
+            } else if (!is_null($value)) {
+                $name = array_key_exists('name', $value) ? $value['name'] : $field;
+                $property = array_key_exists('property', $value) ? $value['property'] : false;
                 $html .= '<meta ';
                 if ($name) {
                     $html .= "name=\"$name\" ";
@@ -137,7 +137,7 @@ class SemanticSEO
         }
 
         foreach ($fields as $field => $value) {
-            if ($override || !isset($this->meta[$field])) {
+            if ($override || !array_key_exists($field, $this->meta)) {
                 $this->meta[$field] = $value;
             }
         }
@@ -158,7 +158,7 @@ class SemanticSEO
 
     public function __call($method, $parameters)
     {
-        if (isset($this->typeAliases[$method])) {
+        if (array_key_exists($method, $this->typeAliases)) {
             return $this->is(App::make($this->typeAliases[$method]));
         } else {
             return $this->meta(snake_case($method), ...$parameters);
