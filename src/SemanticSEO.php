@@ -5,6 +5,7 @@ namespace NoelDeMartin\SemanticSEO;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\App;
+use NoelDeMartin\SemanticSEO\Types\WebSite;
 
 class SemanticSEO
 {
@@ -14,6 +15,13 @@ class SemanticSEO
     protected $reservedMeta = [
         'title', 'title_prefix', 'title_suffix',
         'canonical',
+    ];
+
+    /**
+     * Type aliases.
+     */
+    protected $typeAliases = [
+        'website' => WebSite::class,
     ];
 
     /**
@@ -78,31 +86,6 @@ class SemanticSEO
         }
 
         return $html;
-    }
-
-    public function title(string $title)
-    {
-        return $this->meta('title', $title);
-    }
-
-    public function titlePrefix(string $prefix)
-    {
-        return $this->meta('title_prefix', $prefix);
-    }
-
-    public function titleSuffix(string $suffix)
-    {
-        return $this->meta('title_suffix', $suffix);
-    }
-
-    public function canonical($url)
-    {
-        return $this->meta('canonical', $url);
-    }
-
-    public function description(string $description)
-    {
-        return $this->meta('description', $description);
     }
 
     public function hide()
@@ -171,5 +154,14 @@ class SemanticSEO
         $this->types[] = $type;
 
         return $type;
+    }
+
+    public function __call($method, $parameters)
+    {
+        if (isset($this->typeAliases[$method])) {
+            return $this->is(App::make($this->typeAliases[$method]));
+        } else {
+            return $this->meta(snake_case($method), ...$parameters);
+        }
     }
 }

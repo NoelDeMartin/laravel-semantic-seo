@@ -9,10 +9,12 @@ class Thing
 {
     protected $attributes = [];
 
-    protected $attributeTypes = [
-        'name' => 'text',
-        'description' => 'text',
-    ];
+    protected $attributeDefinitions = [];
+
+    public function __construct()
+    {
+        $this->attributeDefinitions = $this->getAttributeDefinitions();
+    }
 
     public function setAttribute($attribute, $value)
     {
@@ -34,8 +36,9 @@ class Thing
     {
         $seo->meta(
             $this->fillAttributeValues([
-                'title' => 'name',
+                'name' => 'title',
                 'description' => 'description',
+                'url' => 'canonical',
             ]),
             false
         );
@@ -64,7 +67,7 @@ class Thing
 
         return array_merge($attributes, [
             '@context' => 'http://schema.org',
-            '@type' => 'Thing',
+            '@type' => $this->getType(),
         ]);
     }
 
@@ -72,19 +75,35 @@ class Thing
     {
         $values = [];
 
-        foreach ($attributes as $key => $attribute) {
+        foreach ($attributes as $attribute => $target) {
             if (isset($this->attributes[$attribute])) {
-                $values[$key] = $this->attributes[$attribute];
+                $values[$target] = $this->attributes[$attribute];
             }
         }
 
         return $values;
     }
 
+    protected function getAttributeDefinitions()
+    {
+        return [
+            'name' => 'text',
+            'description' => 'text',
+            'image' => ['image', 'url'],
+            'url' => 'url',
+            'sameAs' => 'url',
+        ];
+    }
+
+    protected function getType()
+    {
+        return class_basename($this);
+    }
+
     public function __call($method, $parameters)
     {
-        if (isset($this->attributeTypes[$method])) {
-            $this->setAttribute($method, $parameters[0]);
+        if (isset($this->attributeDefinitions[$method])) {
+            $this->setAttribute($method, ...$parameters);
 
             return $this;
         } else {
