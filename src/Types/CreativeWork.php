@@ -15,6 +15,12 @@ class CreativeWork extends Thing
             false
         );
 
+        $seo->twitter([
+                'site' => $this->getTwitterHandleFromAttribute('creator'),
+            ],
+            false
+        );
+
         parent::beforeRender($seo);
     }
 
@@ -22,6 +28,7 @@ class CreativeWork extends Thing
     {
         return array_merge(parent::getAttributeDefinitions(), [
             'about' => Thing::class,
+            'creator' => ['organization', Person::class],
             'headline' => 'text',
         ]);
     }

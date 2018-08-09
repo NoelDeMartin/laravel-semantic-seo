@@ -5,6 +5,7 @@ namespace NoelDeMartin\SemanticSEO;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\App;
+use NoelDeMartin\SemanticSEO\Types\Person;
 use NoelDeMartin\SemanticSEO\Types\WebSite;
 
 class SemanticSEO
@@ -21,6 +22,7 @@ class SemanticSEO
      * Type aliases.
      */
     protected $typeAliases = [
+        'person' => Person::class,
         'website' => WebSite::class,
     ];
 

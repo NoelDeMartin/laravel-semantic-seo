@@ -3,10 +3,14 @@
 namespace NoelDeMartin\SemanticSEO\Types;
 
 use BadMethodCallException;
+use Illuminate\Support\Facades\App;
 use NoelDeMartin\SemanticSEO\SemanticSEO;
+use NoelDeMartin\SemanticSEO\Types\Concerns\GetsFormattedAttributes;
 
 class Thing
 {
+    use GetsFormattedAttributes;
+
     protected $attributes = [];
 
     protected $attributeDefinitions = [];
@@ -16,17 +20,27 @@ class Thing
         $this->attributeDefinitions = $this->getAttributeDefinitions();
     }
 
-    public function setAttribute($attribute, $value)
+    public function hasAttribute($name)
     {
-        $this->attributes[$attribute] = $value;
+        return array_key_exists($name, $this->attributes);
+    }
+
+    public function getAttribute($name)
+    {
+        return $this->hasAttribute($name) ? $this->attributes[$name] : null;
+    }
+
+    public function setAttribute($name, $value)
+    {
+        $this->attributes[$name] = $this->castAttribute($name, $value);
 
         return $this;
     }
 
     public function setAttributes($attributes)
     {
-        foreach ($attributes as $attribute => $value) {
-            $this->setAttribute($attribute, $value);
+        foreach ($attributes as $name => $value) {
+            $this->setAttribute($name, $value);
         }
 
         return $this;
@@ -40,6 +54,30 @@ class Thing
                 'description' => 'description',
                 'url' => 'canonical',
             ]),
+            false
+        );
+
+        $seo->opengraph(
+            array_merge(
+                ['type' => 'website'],
+                $this->fillAttributeValues([
+                    'name' => 'title',
+                    'description' => 'description',
+                    'image' => 'image',
+                    'url' => 'url',
+                ])
+            ),
+            false
+        );
+
+        $seo->twitter(
+            array_merge(
+                ['card' => 'summary'],
+                $this->fillAttributeValues([
+                    'image' => 'image',
+                    'url' => 'url',
+                ])
+            ),
             false
         );
     }
@@ -68,12 +106,75 @@ class Thing
         $values = [];
 
         foreach ($attributes as $attribute => $target) {
-            if (array_key_exists($attribute, $this->attributes)) {
-                $values[$target] = $this->attributes[$attribute];
+            if ($this->hasAttribute($attribute)) {
+                $values[$target] = $this->getAttribute($attribute);
             }
         }
 
         return $values;
+    }
+
+    protected function castAttribute($name, $value)
+    {
+        $types = $this->attributeDefinitions[$name];
+
+        if (!is_array($types)) {
+            $types = [$types];
+        }
+
+        foreach ($types as $type) {
+            if ($this->isType($type, $value)) {
+                return $value;
+            }
+        }
+
+        foreach ($types as $type) {
+            $castedValue = $this->castValue($type, $value);
+
+            if (!is_null($castedValue)) {
+                return $castedValue;
+            }
+        }
+
+        return null;
+    }
+
+    protected function isType($type, $value)
+    {
+        switch ($type) {
+            case 'text':
+            case 'url':
+            case 'image':
+                return is_string($value);
+            case Thing::class:
+                return $value instanceof Thing;
+            case Person::class:
+                return $value instanceof Person;
+            default:
+                return false;
+        }
+    }
+
+    protected function castValue($type, $value)
+    {
+        try {
+            $castedValue = null;
+            switch ($type) {
+                case 'text':
+                case 'url':
+                case 'image':
+                    $castedValue = (string) $value;
+                    break;
+                case Thing::class:
+                case Person::class:
+                    $castedValue = App::make($value);
+                    break;
+            }
+
+            return $this->isType($type, $castedValue) ? $castedValue : null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     protected function getAttributeDefinitions()

@@ -3,6 +3,7 @@
 namespace Testing\Unit;
 
 use Testing\TestCase;
+use Testing\Stubs\JohnDoe;
 use NoelDeMartin\SemanticSEO\Types\Thing;
 use NoelDeMartin\SemanticSEO\Types\WebSite;
 use NoelDeMartin\SemanticSEO\Support\Facades\SemanticSEO;
@@ -66,6 +67,18 @@ class TypesTests extends TestCase
         $this->assertContains("<title>$headline</title>", $html);
         $this->assertContains("<link rel=\"canonical\" href=\"$url\" />", $html);
         $this->assertContains("<meta name=\"description\" content=\"$description\" />", $html);
+    }
+
+    public function test_twitter_handle()
+    {
+        $twitterHandle = $this->faker->word;
+
+        SemanticSEO::website()->creator(JohnDoe::class);
+
+        $this->assertContains(
+            "<meta name=\"twitter:site\" content=\"@JohnDoe\" />",
+            SemanticSEO::render()
+        );
     }
 
     public function test_disable_automatically_filled_meta()
