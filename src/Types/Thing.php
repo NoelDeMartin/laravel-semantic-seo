@@ -44,14 +44,7 @@ class Thing
         );
     }
 
-    public function render()
-    {
-        return '<script type="application/ld+json">' .
-            json_encode($this->toArray()) .
-        '</script>';
-    }
-
-    protected function toArray()
+    public function toArray()
     {
         $attributes = array_map(
             function ($value) {
@@ -66,7 +59,6 @@ class Thing
         );
 
         return array_merge($attributes, [
-            '@context' => 'http://schema.org',
             '@type' => $this->getType(),
         ]);
     }

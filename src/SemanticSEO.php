@@ -81,8 +81,29 @@ class SemanticSEO
             }
         }
 
-        foreach ($this->types as $type) {
-            $html .= $type->render();
+        $ldJson = '';
+        if (count($this->types) === 1) {
+            $ldJson = json_encode(
+                array_merge(
+                    ['@context' => 'http://schema.org'],
+                    $this->types[0]->toArray()
+                )
+            );
+        } else if (count($this->types) > 0) {
+            $ldJson = [
+                '@context' => 'http://schema.org',
+                '@graph' => [],
+            ];
+
+            foreach ($this->types as $type) {
+                $ldJson['@graph'][] = $type->toArray();
+            }
+
+            $ldJson = json_encode($ldJson);
+        }
+
+        if (!empty($ldJson)) {
+            $html .= "<script type=\"application/ld+json\">$ldJson</script>";
         }
 
         return $html;

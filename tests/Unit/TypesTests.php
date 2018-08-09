@@ -4,6 +4,7 @@ namespace Testing\Unit;
 
 use Testing\TestCase;
 use NoelDeMartin\SemanticSEO\Types\Thing;
+use NoelDeMartin\SemanticSEO\Types\WebSite;
 use NoelDeMartin\SemanticSEO\Support\Facades\SemanticSEO;
 
 class TypesTests extends TestCase
@@ -22,9 +23,9 @@ class TypesTests extends TestCase
         $this->assertContains(
             '<script type="application/ld+json">' .
                 json_encode([
+                    '@context' => 'http://schema.org',
                     'name' => $name,
                     'description' => $description,
-                    '@context' => 'http://schema.org',
                     '@type' => 'Thing',
                 ]) .
             '</script>',
@@ -52,11 +53,11 @@ class TypesTests extends TestCase
         $this->assertContains(
             '<script type="application/ld+json">' .
                 json_encode([
+                    '@context' => 'http://schema.org',
                     'url' => $url,
                     'name' => $name,
                     'headline' => $headline,
                     'description' => $description,
-                    '@context' => 'http://schema.org',
                     '@type' => 'WebSite',
                 ]) .
             '</script>',
@@ -75,5 +76,28 @@ class TypesTests extends TestCase
         SemanticSEO::is(Thing::class)->name($name);
 
         $this->assertNotContains("<title>$name</title>", SemanticSEO::render());
+    }
+
+    public function test_multiple_types()
+    {
+        SemanticSEO::is(Thing::class);
+        SemanticSEO::is(WebSite::class);
+
+        $this->assertContains(
+            '<script type="application/ld+json">' .
+                json_encode([
+                    '@context' => 'http://schema.org',
+                    '@graph' => [
+                        [
+                            '@type' => 'Thing',
+                        ],
+                        [
+                            '@type' => 'WebSite',
+                        ],
+                    ],
+                ]) .
+            '</script>',
+            SemanticSEO::render()
+        );
     }
 }
