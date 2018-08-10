@@ -2,7 +2,9 @@
 
 namespace NoelDeMartin\SemanticSEO\Types;
 
+use DateTime;
 use BadMethodCallException;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use NoelDeMartin\SemanticSEO\SemanticSEO;
 use NoelDeMartin\SemanticSEO\Types\Concerns\GetsFormattedAttributes;
@@ -88,9 +90,10 @@ class Thing
             function ($value) {
                 if ($value instanceof Thing) {
                     return $value->toArray();
+                } else if ($value instanceof Carbon) {
+                    return $value->format(DateTime::ISO8601);
                 } else {
                     return $value;
-
                 }
             },
             $this->attributes
@@ -164,6 +167,8 @@ class Thing
                 return is_string($value);
             case 'integer':
                 return is_int($value);
+            case 'date':
+                return $value instanceof Carbon;
             case Thing::class:
                 return $value instanceof Thing;
             case Person::class:
@@ -185,6 +190,11 @@ class Thing
                     break;
                 case 'integer':
                     $castedValue = (int) $value;
+                    break;
+                case 'date':
+                    $castedValue = $value instanceof DateTime
+                        ? Carbon::instance($value)
+                        : Carbon::parse($value);
                     break;
                 case Thing::class:
                 case Person::class:

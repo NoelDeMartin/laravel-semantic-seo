@@ -29,7 +29,13 @@ class CreativeWork extends Thing
         return array_merge(parent::getAttributeDefinitions(), [
             'about' => Thing::class,
             'creator' => ['organization', Person::class],
+            'author' => ['organization', Person::class],
             'headline' => 'text',
+            'discussionUrl' => 'url',
+            'inLanguage' => ['language', 'text'],
+            'dateCreated' => 'date',
+            'datePublished' => 'date',
+            'dateModified' => 'date',
         ]);
     }
 }

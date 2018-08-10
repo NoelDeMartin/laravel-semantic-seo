@@ -2,6 +2,7 @@
 
 namespace Testing\Unit;
 
+use DateTime;
 use Testing\TestCase;
 use Testing\Stubs\JohnDoe;
 use NoelDeMartin\SemanticSEO\Types\Thing;
@@ -42,12 +43,14 @@ class TypesTests extends TestCase
         $name = $this->faker->word;
         $headline = $this->faker->sentence;
         $description = $this->faker->sentence;
+        $date = $this->faker->datetime();
 
         SemanticSEO::website()
             ->url($url)
             ->name($name)
             ->headline($headline)
-            ->description($description);
+            ->description($description)
+            ->dateCreated($date);
 
         $html = SemanticSEO::render();
 
@@ -59,6 +62,7 @@ class TypesTests extends TestCase
                     'name' => $name,
                     'headline' => $headline,
                     'description' => $description,
+                    'dateCreated' => $date->format(DateTime::ISO8601),
                     '@type' => 'WebSite',
                 ]) .
             '</script>',
