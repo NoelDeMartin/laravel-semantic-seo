@@ -162,6 +162,8 @@ class Thing
             case 'url':
             case 'image':
                 return is_string($value);
+            case 'integer':
+                return is_int($value);
             case Thing::class:
                 return $value instanceof Thing;
             case Person::class:
@@ -180,6 +182,9 @@ class Thing
                 case 'url':
                 case 'image':
                     $castedValue = (string) $value;
+                    break;
+                case 'integer':
+                    $castedValue = (int) $value;
                     break;
                 case Thing::class:
                 case Person::class:

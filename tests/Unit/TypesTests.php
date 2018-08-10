@@ -69,6 +69,24 @@ class TypesTests extends TestCase
         $this->assertContains("<meta name=\"description\" content=\"$description\" />", $html);
     }
 
+    public function test_article()
+    {
+        $wordCount = random_int(50, 1000);
+
+        SemanticSEO::article()->wordCount($wordCount);
+
+        $this->assertContains(
+            '<script type="application/ld+json">' .
+                json_encode([
+                    '@context' => 'http://schema.org',
+                    'wordCount' => $wordCount,
+                    '@type' => 'Article',
+                ]) .
+            '</script>',
+            SemanticSEO::render()
+        );
+    }
+
     public function test_twitter_handle()
     {
         $twitterHandle = $this->faker->word;
