@@ -10,6 +10,9 @@ class JohnDoe extends Person
     {
         parent::__construct();
 
-        $this->sameAs('https://twitter.com/JohnDoe');
+        $this->sameAs([
+            'https://twitter.com/JohnDoe',
+            'https://github.com/JohnDoe',
+        ]);
     }
 }

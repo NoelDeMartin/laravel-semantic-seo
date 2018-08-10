@@ -114,29 +114,45 @@ class Thing
         return $values;
     }
 
-    protected function castAttribute($name, $value)
+    protected function castAttribute($name, $values)
     {
         $types = $this->attributeDefinitions[$name];
-
         if (!is_array($types)) {
             $types = [$types];
         }
 
-        foreach ($types as $type) {
-            if ($this->isType($type, $value)) {
-                return $value;
+        $originalArray = is_array($values);
+        if (!$originalArray) {
+            $values = [$values];
+        }
+
+        $typesMatch = array_fill(0, count($values), false);
+        foreach ($values as $i => $value) {
+            foreach ($types as $type) {
+                if ($this->isType($type, $value)) {
+                    $typesMatch[$i] = true;
+                    break;
+                }
+            }
+
+            if (!$typesMatch[$i]) {
+                foreach ($types as $type) {
+                    $castedValue = $this->castValue($type, $value);
+
+                    if (!is_null($castedValue)) {
+                        $values[$i] = $castedValue;
+                        $typesMatch[$i] = true;
+                        break;
+                    }
+                }
             }
         }
 
-        foreach ($types as $type) {
-            $castedValue = $this->castValue($type, $value);
-
-            if (!is_null($castedValue)) {
-                return $castedValue;
-            }
+        if (array_unique($typesMatch) === [true]) {
+            return $originalArray ? $values : $values[0];
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     protected function isType($type, $value)
