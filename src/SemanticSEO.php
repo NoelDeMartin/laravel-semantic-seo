@@ -72,20 +72,27 @@ class SemanticSEO
         foreach ($meta as $field => $value) {
             if (is_string($value)) {
                 $html .= "<meta name=\"$field\" content=\"$value\" />";
-            } else if (!is_null($value)) {
+            } else if (is_array($value)) {
                 $name = array_key_exists('name', $value) ? $value['name'] : $field;
                 $property = array_key_exists('property', $value) ? $value['property'] : false;
-                $html .= '<meta ';
-                if ($name) {
-                    $html .= "name=\"$name\" ";
-                }
+                $contents = $value['content'];
 
-                if ($property) {
-                    $html .= "property=\"$property\" ";
+                if (!is_array($contents)) {
+                    $contents = [$contents];
                 }
+                foreach ($contents as $content) {
+                    $html .= '<meta ';
 
-                $content = $value['content'];
-                $html .= "content=\"$content\" />";
+                    if ($name) {
+                        $html .= "name=\"$name\" ";
+                    }
+
+                    if ($property) {
+                        $html .= "property=\"$property\" ";
+                    }
+
+                    $html .= "content=\"$content\" />";
+                }
             }
         }
 
@@ -136,7 +143,7 @@ class SemanticSEO
         return $this;
     }
 
-    public function openGraph($fields, $override = true)
+    public function openGraph($fields, $override = true, $withoutPrefix = false)
     {
         if (!is_array($fields)) {
             $fields = [$fields => $override];
@@ -144,11 +151,12 @@ class SemanticSEO
         }
 
         foreach ($fields as $field => $value) {
+            $property = ($withoutPrefix ? '' : 'og:') . $field;
             $this->meta(
-                'og:' . $field,
+                $property,
                 [
                     'name' => false,
-                    'property' => 'og:' . $field,
+                    'property' => $property,
                     'content' => $value,
                 ],
                 $override

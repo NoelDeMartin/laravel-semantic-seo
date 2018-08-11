@@ -9,15 +9,16 @@ class CreativeWork extends Thing
     public function beforeRender(SemanticSEO $seo)
     {
         $seo->meta(
-            $this->fillAttributeValues([
-                'headline' => 'title',
+            $this->withoutEmptyValues([
+                'title' => $this->getAttribute('headline'),
             ]),
             false
         );
 
-        $seo->twitter([
+        $seo->twitter(
+            $this->withoutEmptyValues([
                 'site' => $this->getTwitterHandleFromAttribute('creator'),
-            ],
+            ]),
             false
         );
 
@@ -28,14 +29,17 @@ class CreativeWork extends Thing
     {
         return array_merge(parent::getAttributeDefinitions(), [
             'about' => Thing::class,
-            'creator' => ['organization', Person::class],
-            'author' => ['organization', Person::class],
+            'creator' => [Organization::class, Person::class],
+            'author' => [Organization::class, Person::class],
+            'publisher' => [Organization::class, Person::class],
             'headline' => 'text',
             'discussionUrl' => 'url',
             'inLanguage' => ['language', 'text'],
             'dateCreated' => 'date',
             'datePublished' => 'date',
             'dateModified' => 'date',
+            'expires' => 'date',
+            'keywords' => 'text',
         ]);
     }
 }

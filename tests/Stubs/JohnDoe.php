@@ -10,9 +10,15 @@ class JohnDoe extends Person
     {
         parent::__construct();
 
+        $this->name('John Doe');
         $this->sameAs([
             'https://twitter.com/JohnDoe',
             'https://github.com/JohnDoe',
         ]);
+    }
+
+    protected function getType()
+    {
+        return 'Person';
     }
 }

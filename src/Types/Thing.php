@@ -4,6 +4,7 @@ namespace NoelDeMartin\SemanticSEO\Types;
 
 use DateTime;
 use BadMethodCallException;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use NoelDeMartin\SemanticSEO\SemanticSEO;
@@ -51,35 +52,35 @@ class Thing
     public function beforeRender(SemanticSEO $seo)
     {
         $seo->meta(
-            $this->fillAttributeValues([
-                'name' => 'title',
-                'description' => 'description',
-                'url' => 'canonical',
+            $this->withoutEmptyValues([
+                'title' => $this->getAttribute('name'),
+                'description' => $this->getAttribute('description'),
+                'canonical' => $this->getAttribute('url'),
             ]),
             false
         );
 
         $seo->opengraph(
-            array_merge(
-                ['type' => 'website'],
-                $this->fillAttributeValues([
-                    'name' => 'title',
-                    'description' => 'description',
-                    'image' => 'image',
-                    'url' => 'url',
-                ])
-            ),
+            $this->withoutEmptyValues([
+                'type' => 'website',
+                'title' => $this->getAttribute('name'),
+                'description' => $this->getAttribute('description'),
+                'image' => $this->getImageUrlFromAttribute('image'),
+                'image:alt' => $this->getImageDescriptionFromAttribute('image'),
+                'url' => $this->getAttribute('url'),
+            ]),
             false
         );
 
         $seo->twitter(
-            array_merge(
-                ['card' => 'summary'],
-                $this->fillAttributeValues([
-                    'image' => 'image',
-                    'url' => 'url',
-                ])
-            ),
+            $this->withoutEmptyValues([
+                'card' => 'summary',
+                'title' => $this->getAttribute('name'),
+                'description' => $this->getAttribute('description'),
+                'image' => $this->getImageUrlFromAttribute('image'),
+                'image:alt' => $this->getImageDescriptionFromAttribute('image'),
+                'url' => $this->getAttribute('url'),
+            ]),
             false
         );
     }
@@ -104,17 +105,17 @@ class Thing
         ]);
     }
 
-    protected function fillAttributeValues($attributes)
+    protected function withoutEmptyValues($values)
     {
-        $values = [];
+        $cleanValues = [];
 
-        foreach ($attributes as $attribute => $target) {
-            if ($this->hasAttribute($attribute)) {
-                $values[$target] = $this->getAttribute($attribute);
+        foreach ($values as $key => $value) {
+            if (!is_null($value)) {
+                $cleanValues[$key] = $value;
             }
         }
 
-        return $values;
+        return $cleanValues;
     }
 
     protected function castAttribute($name, $values)
@@ -162,17 +163,22 @@ class Thing
     {
         switch ($type) {
             case 'text':
-            case 'url':
-            case 'image':
                 return is_string($value);
+            case 'url':
+                return is_string($value) && Str::startsWith($value, 'http');
+            case 'image':
             case 'integer':
                 return is_int($value);
             case 'date':
                 return $value instanceof Carbon;
             case Thing::class:
                 return $value instanceof Thing;
+            case ImageObject::class:
+                return $value instanceof ImageObject;
             case Person::class:
                 return $value instanceof Person;
+            case Organization::class:
+                return $value instanceof Organization;
             default:
                 return false;
         }
@@ -185,7 +191,6 @@ class Thing
             switch ($type) {
                 case 'text':
                 case 'url':
-                case 'image':
                     $castedValue = (string) $value;
                     break;
                 case 'integer':
@@ -197,7 +202,9 @@ class Thing
                         : Carbon::parse($value);
                     break;
                 case Thing::class:
+                case ImageObject::class:
                 case Person::class:
+                case Organization::class:
                     $castedValue = App::make($value);
                     break;
             }
@@ -213,9 +220,10 @@ class Thing
         return [
             'name' => 'text',
             'description' => 'text',
-            'image' => ['image', 'url'],
+            'image' => [ImageObject::class, 'url'],
             'url' => 'url',
             'sameAs' => 'url',
+            'mainEntityOfPage' => [CreativeWork::class, 'url'],
         ];
     }
 
