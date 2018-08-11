@@ -35,6 +35,7 @@ class CreativeWork extends Thing
             'headline' => 'text',
             'discussionUrl' => 'url',
             'inLanguage' => ['language', 'text'],
+            'hasPart' => [CreativeWork::class, 'trip'],
             'dateCreated' => 'date',
             'datePublished' => 'date',
             'dateModified' => 'date',

@@ -9,6 +9,7 @@ use NoelDeMartin\SemanticSEO\Types\Thing;
 use NoelDeMartin\SemanticSEO\Types\Person;
 use NoelDeMartin\SemanticSEO\Types\WebSite;
 use NoelDeMartin\SemanticSEO\Types\ImageObject;
+use NoelDeMartin\SemanticSEO\Types\CreativeWork;
 use NoelDeMartin\SemanticSEO\Support\Facades\SemanticSEO;
 
 class TypesTests extends TestCase
@@ -115,6 +116,41 @@ class TypesTests extends TestCase
         $this->assertContains("<meta property=\"article:author\" content=\"John Doe\" />", $html);
         $this->assertContains("<meta property=\"article:tag\" content=\"foo\" />", $html);
         $this->assertContains("<meta property=\"article:tag\" content=\"bar\" />", $html);
+    }
+
+    public function test_collection_page()
+    {
+        $title = $this->faker->sentence;
+        $name = $this->faker->name;
+
+        $creativeWork = (new CreativeWork)->name($title);
+        $webSite = (new WebSite)->name($name);
+
+        SemanticSEO::collection()
+            ->hasPart([
+                $creativeWork,
+                $webSite,
+            ]);
+
+        $this->assertContains(
+            '<script type="application/ld+json">' .
+                json_encode([
+                    '@context' => 'http://schema.org',
+                    'hasPart' => [
+                        [
+                            'name' => $title,
+                            '@type' => 'CreativeWork',
+                        ],
+                        [
+                            'name' => $name,
+                            '@type' => 'WebSite',
+                        ],
+                    ],
+                    '@type' => 'CollectionPage',
+                ]) .
+            '</script>',
+            SemanticSEO::render()
+        );
     }
 
     public function test_custom_type()

@@ -10,6 +10,7 @@ use NoelDeMartin\SemanticSEO\Types\Person;
 use NoelDeMartin\SemanticSEO\Types\WebSite;
 use NoelDeMartin\SemanticSEO\Types\Article;
 use NoelDeMartin\SemanticSEO\Types\AboutPage;
+use NoelDeMartin\SemanticSEO\Types\CollectionPage;
 
 class SemanticSEO
 {
@@ -25,11 +26,12 @@ class SemanticSEO
      * Type aliases.
      */
     protected $typeAliases = [
+        'blog' => Blog::class,
         'person' => Person::class,
         'website' => WebSite::class,
-        'blog' => Blog::class,
         'article' => Article::class,
         'about' => AboutPage::class,
+        'collection' => CollectionPage::class,
     ];
 
     /**

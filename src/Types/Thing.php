@@ -87,22 +87,31 @@ class Thing
 
     public function toArray()
     {
-        $attributes = array_map(
-            function ($value) {
-                if ($value instanceof Thing) {
-                    return $value->toArray();
-                } else if ($value instanceof Carbon) {
-                    return $value->format(DateTime::ISO8601);
-                } else {
-                    return $value;
-                }
-            },
-            $this->attributes
+        $attributes = $this->withoutEmptyValues(
+            $this->convertValues($this->attributes)
         );
 
         return array_merge($attributes, [
             '@type' => $this->getType(),
         ]);
+    }
+
+    protected function convertValues($attributes)
+    {
+        return array_map(
+            function ($value) {
+                if ($value instanceof Thing) {
+                    return $value->toArray();
+                } else if ($value instanceof Carbon) {
+                    return $value->format(DateTime::ISO8601);
+                } else if (is_array($value)) {
+                    return $this->convertValues($value);
+                } else {
+                    return $value;
+                }
+            },
+            $attributes
+        );
     }
 
     protected function withoutEmptyValues($values)
@@ -179,6 +188,8 @@ class Thing
                 return $value instanceof Person;
             case Organization::class:
                 return $value instanceof Organization;
+            case CreativeWork::class:
+                return $value instanceof CreativeWork;
             default:
                 return false;
         }
@@ -205,6 +216,7 @@ class Thing
                 case ImageObject::class:
                 case Person::class:
                 case Organization::class:
+                case CreativeWork::class:
                     $castedValue = App::make($value);
                     break;
             }
