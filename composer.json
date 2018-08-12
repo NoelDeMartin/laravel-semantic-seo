@@ -34,7 +34,10 @@
         "laravel": {
             "providers": [
                 "NoelDeMartin\\SemanticSEO\\SemanticSEOServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "SemanticSEO": "NoelDeMartin\\SemanticSEO\\Support\\Facades\\SemanticSEO"
+            }
         }
     }
 }
