@@ -77,7 +77,7 @@ SemanticSEO::is(MyType::class)
     ->myAttribute('foobar');
 ```
 
-To see more examples of what's available and how to use existing types, take a look to the tests in `TypesTests.php` file under /tests.
+To see more examples of what's available and how to use existing types, take a look to the tests in `TypesTests.php` file under /tests/Unit.
 
 ### Using Meta tags
 
@@ -97,7 +97,7 @@ SemanticSEO::meta([
 ]);
 ```
 
-To see more examples of what's available and how to use existing meta tags, take a look to the tests in `MetaTagsTests.php` file under /tests.
+To see more examples of what's available and how to use existing meta tags, take a look to the tests in `MetaTagsTests.php` file under /tests/Unit.
 
 Some other special meta tags are the following:
 
@@ -155,3 +155,13 @@ Which will generate:
 <meta property="og:title" content="Open Graph title">
 ```
 
+## Extending
+
+The basic functionallity for this package is completed, but it's lacking some type definitions. They are, however, very easy to add. In order to create a new type (or extend an existing one) three things need to be done:
+
+- Extend one existing type under `NoelDeMartin\SemanticSEO\Types` namespace. If none appropiate exists, use `Thing`.
+- If the name of your class is not the name of the type (for example, if you are defining a class to reuse the arguments), override `getType` method and return the appropriate name.
+- If you want to automatically add meta tags when using a type, override the `beforeRender` method.
+- If you want to add extra field attributes, override the `getAttributeDefinitions` method.
+
+Examples on how to do this can be found under the /src/Types folder, since existing classes already use this approach. I encourage you to create PRs adding extensions that live within the schema.org specification. The hierarchy of types together with their fields can be found [here](https://schema.org/docs/full.html).

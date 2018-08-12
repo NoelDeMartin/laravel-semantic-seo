@@ -1,7 +1,7 @@
 {
     "name": "noeldemartin/laravel-semantic-seo",
-    "description": "Provide utilites to add Semantic SEO to Laravel Applications.",
-    "keywords": ["laravel", "seo"],
+    "description": "Provide utilities to add Semantic SEO to Laravel Applications.",
+    "keywords": ["laravel", "seo", "semantic-html", "semantic-seo"],
     "license": "MIT",
     "authors": [
         {
