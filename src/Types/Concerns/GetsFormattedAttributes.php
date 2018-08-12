@@ -2,7 +2,6 @@
 
 namespace NoelDeMartin\SemanticSEO\Types\Concerns;
 
-use DateTime;
 use NoelDeMartin\SemanticSEO\Types\Thing;
 use NoelDeMartin\SemanticSEO\Types\ImageObject;
 use NoelDeMartin\SemanticSEO\Types\Contracts\HasTwitterHandle;
@@ -38,7 +37,7 @@ trait GetsFormattedAttributes
         $value = $this->getAttribute($name);
 
         if ($this->isType('date', $value)) {
-            return $value->format(DateTime::ISO8601);
+            return $value->toISO8601String();
         } else {
             return null;
         }

@@ -2,9 +2,9 @@
 
 namespace Testing\Unit;
 
-use DateTime;
 use Testing\TestCase;
 use Testing\Stubs\JohnDoe;
+use Illuminate\Support\Carbon;
 use NoelDeMartin\SemanticSEO\Types\Thing;
 use NoelDeMartin\SemanticSEO\Types\Person;
 use NoelDeMartin\SemanticSEO\Types\WebSite;
@@ -37,7 +37,7 @@ class TypesTests extends TestCase
             $html
         );
         $this->assertContains("<title>$name</title>", $html);
-        $this->assertContains("<meta name=\"description\" content=\"$description\" />", $html);
+        $this->assertContains("<meta name=\"description\" content=\"$description\">", $html);
     }
 
     public function test_web_site()
@@ -46,7 +46,7 @@ class TypesTests extends TestCase
         $name = $this->faker->word;
         $headline = $this->faker->sentence;
         $description = $this->faker->sentence;
-        $date = $this->faker->datetime();
+        $date = Carbon::instance($this->faker->datetime());
 
         SemanticSEO::website()
             ->url($url)
@@ -65,21 +65,21 @@ class TypesTests extends TestCase
                     'name' => $name,
                     'headline' => $headline,
                     'description' => $description,
-                    'dateCreated' => $date->format(DateTime::ISO8601),
+                    'dateCreated' => $date->toISO8601String(),
                     '@type' => 'WebSite',
                 ]) .
             '</script>',
             $html
         );
         $this->assertContains("<title>$headline</title>", $html);
-        $this->assertContains("<link rel=\"canonical\" href=\"$url\" />", $html);
-        $this->assertContains("<meta name=\"description\" content=\"$description\" />", $html);
+        $this->assertContains("<link rel=\"canonical\" href=\"$url\">", $html);
+        $this->assertContains("<meta name=\"description\" content=\"$description\">", $html);
     }
 
     public function test_article()
     {
         $wordCount = random_int(50, 1000);
-        $publishedAt = $this->faker->datetime();
+        $publishedAt = Carbon::instance($this->faker->datetime());
 
         SemanticSEO::article()
             ->wordCount($wordCount)
@@ -94,7 +94,7 @@ class TypesTests extends TestCase
                 json_encode([
                     '@context' => 'http://schema.org',
                     'wordCount' => $wordCount,
-                    'datePublished' => $publishedAt->format(DateTime::ISO8601),
+                    'datePublished' => $publishedAt->toISO8601String(),
                     'keywords' => 'foo, bar',
                     'author' => [
                         'name' => 'John Doe',
@@ -110,12 +110,12 @@ class TypesTests extends TestCase
             $html
         );
         $this->assertContains(
-            "<meta property=\"article:published_time\" content=\"{$publishedAt->format(DateTime::ISO8601)}\" />",
+            "<meta property=\"article:published_time\" content=\"{$publishedAt->toISO8601String()}\">",
             $html
         );
-        $this->assertContains("<meta property=\"article:author\" content=\"John Doe\" />", $html);
-        $this->assertContains("<meta property=\"article:tag\" content=\"foo\" />", $html);
-        $this->assertContains("<meta property=\"article:tag\" content=\"bar\" />", $html);
+        $this->assertContains("<meta property=\"article:author\" content=\"John Doe\">", $html);
+        $this->assertContains("<meta property=\"article:tag\" content=\"foo\">", $html);
+        $this->assertContains("<meta property=\"article:tag\" content=\"bar\">", $html);
     }
 
     public function test_collection_page()
@@ -181,7 +181,7 @@ class TypesTests extends TestCase
         SemanticSEO::website()->creator($creator);
 
         $this->assertContains(
-            "<meta name=\"twitter:site\" content=\"@$twitterHandle\" />",
+            "<meta name=\"twitter:site\" content=\"@$twitterHandle\">",
             SemanticSEO::render()
         );
     }
@@ -199,10 +199,10 @@ class TypesTests extends TestCase
 
         $html = SemanticSEO::render();
 
-        $this->assertContains("<meta property=\"og:image\" content=\"$url\" />", $html);
-        $this->assertContains("<meta property=\"og:image:alt\" content=\"$description\" />", $html);
-        $this->assertContains("<meta name=\"twitter:image\" content=\"$url\" />", $html);
-        $this->assertContains("<meta name=\"twitter:image:alt\" content=\"$description\" />", $html);
+        $this->assertContains("<meta property=\"og:image\" content=\"$url\">", $html);
+        $this->assertContains("<meta property=\"og:image:alt\" content=\"$description\">", $html);
+        $this->assertContains("<meta name=\"twitter:image\" content=\"$url\">", $html);
+        $this->assertContains("<meta name=\"twitter:image:alt\" content=\"$description\">", $html);
     }
 
     public function test_disable_automatically_filled_meta()

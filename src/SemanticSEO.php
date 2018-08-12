@@ -19,6 +19,8 @@ class SemanticSEO
      */
     protected $reservedMeta = [
         'title', 'title_prefix', 'title_suffix',
+        'rss_url', 'rss_title',
+        'sitemap_url', 'sitemap_title',
         'canonical',
     ];
 
@@ -59,12 +61,28 @@ class SemanticSEO
             $html .= '<title>' . $titlePrefix . $meta['title'] . $titleSuffix . '</title>';
         }
 
+        if (array_key_exists('rss_url', $meta) && is_string($meta['rss_url'])) {
+            $html .= '<link rel="alternate" type="application/rss+xml" ' .
+                ((array_key_exists('rss_title', $meta) && is_string($meta['rss_title']))
+                    ? ('title="' . $meta['rss_title'] . '" ')
+                    : '') .
+                'href="' . $meta['rss_url'] . '">';
+        }
+
+        if (array_key_exists('sitemap_url', $meta) && is_string($meta['sitemap_url'])) {
+            $html .= '<link rel="sitemap" type="application/xml" ' .
+                ((array_key_exists('sitemap_title', $meta) && is_string($meta['sitemap_title']))
+                    ? ('title="' . $meta['sitemap_title'] . '" ')
+                    : '') .
+                'href="' . $meta['sitemap_url'] . '">';
+        }
+
         if (array_key_exists('canonical', $meta)) {
             if (is_string($meta['canonical'])) {
-                $html .= '<link rel="canonical" href="' . $meta['canonical'] . '" />';
+                $html .= '<link rel="canonical" href="' . $meta['canonical'] . '">';
             }
         } else {
-            $html .= '<link rel="canonical" href="' . URL::current() . '" />';
+            $html .= '<link rel="canonical" href="' . URL::current() . '">';
         }
 
         foreach ($this->reservedMeta as $field) {
@@ -73,7 +91,7 @@ class SemanticSEO
 
         foreach ($meta as $field => $value) {
             if (is_string($value)) {
-                $html .= "<meta name=\"$field\" content=\"$value\" />";
+                $html .= "<meta name=\"$field\" content=\"$value\">";
             } else if (is_array($value)) {
                 $name = array_key_exists('name', $value) ? $value['name'] : $field;
                 $property = array_key_exists('property', $value) ? $value['property'] : false;
@@ -93,7 +111,7 @@ class SemanticSEO
                         $html .= "property=\"$property\" ";
                     }
 
-                    $html .= "content=\"$content\" />";
+                    $html .= "content=\"$content\">";
                 }
             }
         }
@@ -129,6 +147,22 @@ class SemanticSEO
     public function hide()
     {
         return $this->meta('robots', 'noindex, nofollow');
+    }
+
+    public function rss($url, $title = 'RSS Feed')
+    {
+        $this->meta('rss_url', $url);
+        $this->meta('rss_title', $title);
+
+        return $this;
+    }
+
+    public function sitemap($url, $title = 'Sitemap')
+    {
+        $this->meta('sitemap_url', $url);
+        $this->meta('sitemap_title', $title);
+
+        return $this;
     }
 
     public function twitter($fields, $override = true)

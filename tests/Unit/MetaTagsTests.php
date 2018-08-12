@@ -25,7 +25,7 @@ class MetaTagsTests extends TestCase
         SemanticSEO::description($description);
 
         $this->assertContains(
-            "<meta name=\"description\" content=\"$description\" />",
+            "<meta name=\"description\" content=\"$description\">",
             SemanticSEO::render()
         );
     }
@@ -41,7 +41,33 @@ class MetaTagsTests extends TestCase
         ]);
 
         $this->assertContains(
-            "<meta name=\"$name\" property=\"$property\" content=\"$content\" />",
+            "<meta name=\"$name\" property=\"$property\" content=\"$content\">",
+            SemanticSEO::render()
+        );
+    }
+
+    public function test_render_rss()
+    {
+        $url = $this->faker->url;
+        $title = $this->faker->sentence;
+
+        SemanticSEO::rss($url, $title);
+
+        $this->assertContains(
+            "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$title\" href=\"$url\">",
+            SemanticSEO::render()
+        );
+    }
+
+    public function test_render_sitemap()
+    {
+        $url = $this->faker->url;
+        $title = $this->faker->sentence;
+
+        SemanticSEO::sitemap($url, $title);
+
+        $this->assertContains(
+            "<link rel=\"sitemap\" type=\"application/xml\" title=\"$title\" href=\"$url\">",
             SemanticSEO::render()
         );
     }
@@ -51,7 +77,7 @@ class MetaTagsTests extends TestCase
         SemanticSEO::hide();
 
         $this->assertContains(
-            '<meta name="robots" content="noindex, nofollow" />',
+            '<meta name="robots" content="noindex, nofollow">',
             SemanticSEO::render()
         );
     }
@@ -63,7 +89,7 @@ class MetaTagsTests extends TestCase
         SemanticSEO::canonical($url);
 
         $this->assertContains(
-            "<link rel=\"canonical\" href=\"$url\" />",
+            "<link rel=\"canonical\" href=\"$url\">",
             SemanticSEO::render()
         );
     }
@@ -73,7 +99,7 @@ class MetaTagsTests extends TestCase
         $url = URL::current();
 
         $this->assertContains(
-            "<link rel=\"canonical\" href=\"$url\" />",
+            "<link rel=\"canonical\" href=\"$url\">",
             SemanticSEO::render()
         );
     }
@@ -93,8 +119,8 @@ class MetaTagsTests extends TestCase
         SemanticSEO::twitter(compact('card', 'creator'));
 
         $html = SemanticSEO::render();
-        $this->assertContains("<meta name=\"twitter:card\" content=\"$card\" />", $html);
-        $this->assertContains("<meta name=\"twitter:creator\" content=\"$creator\" />", $html);
+        $this->assertContains("<meta name=\"twitter:card\" content=\"$card\">", $html);
+        $this->assertContains("<meta name=\"twitter:creator\" content=\"$creator\">", $html);
     }
 
     public function test_render_open_graph()
@@ -105,7 +131,7 @@ class MetaTagsTests extends TestCase
         SemanticSEO::openGraph(compact('title', 'url'));
 
         $html = SemanticSEO::render();
-        $this->assertContains("<meta property=\"og:title\" content=\"$title\" />", $html);
-        $this->assertContains("<meta property=\"og:url\" content=\"$url\" />", $html);
+        $this->assertContains("<meta property=\"og:title\" content=\"$title\">", $html);
+        $this->assertContains("<meta property=\"og:url\" content=\"$url\">", $html);
     }
 }

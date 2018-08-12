@@ -103,7 +103,7 @@ class Thing
                 if ($value instanceof Thing) {
                     return $value->toArray();
                 } else if ($value instanceof Carbon) {
-                    return $value->format(DateTime::ISO8601);
+                    return $value->toISO8601String();
                 } else if (is_array($value)) {
                     return $this->convertValues($value);
                 } else {
