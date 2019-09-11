@@ -7,10 +7,12 @@ Use this package to define Semantic SEO information through meta tags and struct
 Install using composer:
 
 ```
-composer require --dev noeldemartin/laravel-semantic-seo
+composer require noeldemartin/laravel-semantic-seo
 ```
 
 The package will be automatically loaded using Laravel's [package discovery](https://laravel.com/docs/5.6/packages#package-discovery).
+
+(If you're using a Laravel version before 6.0, run `composer require noeldemartin/laravel-semantic-seo:0.0.1` instead)
 
 ## Usage
 
