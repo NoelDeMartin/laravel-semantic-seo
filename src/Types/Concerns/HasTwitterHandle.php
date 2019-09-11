@@ -2,6 +2,8 @@
 
 namespace NoelDeMartin\SemanticSEO\Types\Concerns;
 
+use Illuminate\Support\Str;
+
 trait HasTwitterHandle
 {
     public function getTwitterHandle()
@@ -14,7 +16,7 @@ trait HasTwitterHandle
             }
 
             foreach ($sameAs as $url) {
-                if (str_is('https://twitter.com/*', $url)) {
+                if (Str::is('https://twitter.com/*', $url)) {
                     return '@' . substr($url, strlen('https://twitter.com/'));
                 }
             }

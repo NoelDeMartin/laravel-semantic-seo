@@ -2,15 +2,16 @@
 
 namespace NoelDeMartin\SemanticSEO;
 
-use InvalidArgumentException;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
+
+use NoelDeMartin\SemanticSEO\Types\AboutPage;
+use NoelDeMartin\SemanticSEO\Types\Article;
 use NoelDeMartin\SemanticSEO\Types\Blog;
+use NoelDeMartin\SemanticSEO\Types\CollectionPage;
 use NoelDeMartin\SemanticSEO\Types\Person;
 use NoelDeMartin\SemanticSEO\Types\WebSite;
-use NoelDeMartin\SemanticSEO\Types\Article;
-use NoelDeMartin\SemanticSEO\Types\AboutPage;
-use NoelDeMartin\SemanticSEO\Types\CollectionPage;
 
 class SemanticSEO
 {
@@ -234,7 +235,7 @@ class SemanticSEO
         if (array_key_exists($method, $this->typeAliases)) {
             return $this->is(App::make($this->typeAliases[$method]));
         } else {
-            return $this->meta(snake_case($method), ...$parameters);
+            return $this->meta(Str::snake($method), ...$parameters);
         }
     }
 }

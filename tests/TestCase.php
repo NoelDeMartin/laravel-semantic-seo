@@ -14,7 +14,7 @@ class TestCase extends BaseTestCase
 {
     protected $app;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->faker = Faker::create();
 
@@ -27,7 +27,7 @@ class TestCase extends BaseTestCase
         Facade::setFacadeApplication($this->app);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
 
