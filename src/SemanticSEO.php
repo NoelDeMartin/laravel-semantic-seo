@@ -17,8 +17,6 @@ class SemanticSEO
 {
     /**
      * @var array<string>
-     *
-     * Meta fields that are handled specially and should not be auto-generated.
      */
     protected array $reservedMeta = [
         'title', 'title_prefix', 'title_suffix',
@@ -28,8 +26,6 @@ class SemanticSEO
     ];
 
     /**
-     * Type aliases.
-     *
      * @var array<string, string>
      */
     protected array $typeAliases = [
@@ -42,15 +38,11 @@ class SemanticSEO
     ];
 
     /**
-     * Meta field values.
-     *
      * @var array<string, mixed>
      */
     protected array $meta = [];
 
     /**
-     * Types.
-     *
      * @var array<int, Thing>
      */
     protected array $types = [];
@@ -109,6 +101,7 @@ class SemanticSEO
                 if (! is_array($contents)) {
                     $contents = [$contents];
                 }
+
                 foreach ($contents as $content) {
                     $html .= '<meta ';
 
@@ -188,7 +181,7 @@ class SemanticSEO
         return $this;
     }
 
-    public function openGraph(array|string $fields, bool $override = true, bool $withoutPrefix = false): self
+    public function openGraph(array|string $fields, mixed $override = true, bool $withoutPrefix = false): self
     {
         if (! is_array($fields)) {
             $fields = [$fields => $override];

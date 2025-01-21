@@ -21,14 +21,14 @@ This package helps to scaffold [Semantic HTML](https://en.wikipedia.org/wiki/Sem
 The markup generated with this package should be placed on the `head` element. A Blade directive named `semanticSEO` is included with this package:
 
 ```blade.php
-<html>
+<html prefix="og: http://ogp.me/ns#">
     <head>
         @semanticSEO
 
-        // Other tags in head such as css or js assets
+        <!-- Other tags in head such as css or js assets -->
     </head>
     <body>
-        // Page content
+        <!-- Page content -->
     </body>
 </html>
 ```
