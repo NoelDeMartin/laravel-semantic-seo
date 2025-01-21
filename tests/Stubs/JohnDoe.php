@@ -17,7 +17,7 @@ class JohnDoe extends Person
         ]);
     }
 
-    protected function getType()
+    protected function getType(): string
     {
         return 'Person';
     }

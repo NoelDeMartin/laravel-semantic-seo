@@ -2,9 +2,9 @@
 
 namespace Testing\Unit;
 
-use Testing\TestCase;
 use Illuminate\Support\Facades\URL;
 use NoelDeMartin\SemanticSEO\Support\Facades\SemanticSEO;
+use Testing\TestCase;
 
 class MetaTagsTests extends TestCase
 {
@@ -25,7 +25,7 @@ class MetaTagsTests extends TestCase
         SemanticSEO::description($description);
 
         $this->assertStringContainsString(
-            "<meta name=\"description\" content=\"$description\">",
+            "<meta name=\"description\" content=\"{$description}\">",
             SemanticSEO::render()
         );
     }
@@ -37,11 +37,11 @@ class MetaTagsTests extends TestCase
         $property = $this->faker->word;
 
         SemanticSEO::meta([
-            $name => compact('property', 'content'),
+            $name => ['property' => $property, 'content' => $content],
         ]);
 
         $this->assertStringContainsString(
-            "<meta name=\"$name\" property=\"$property\" content=\"$content\">",
+            "<meta name=\"{$name}\" property=\"{$property}\" content=\"{$content}\">",
             SemanticSEO::render()
         );
     }
@@ -54,7 +54,7 @@ class MetaTagsTests extends TestCase
         SemanticSEO::rss($url, $title);
 
         $this->assertStringContainsString(
-            "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$title\" href=\"$url\">",
+            "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"{$title}\" href=\"{$url}\">",
             SemanticSEO::render()
         );
     }
@@ -67,7 +67,7 @@ class MetaTagsTests extends TestCase
         SemanticSEO::sitemap($url, $title);
 
         $this->assertStringContainsString(
-            "<link rel=\"sitemap\" type=\"application/xml\" title=\"$title\" href=\"$url\">",
+            "<link rel=\"sitemap\" type=\"application/xml\" title=\"{$title}\" href=\"{$url}\">",
             SemanticSEO::render()
         );
     }
@@ -89,7 +89,7 @@ class MetaTagsTests extends TestCase
         SemanticSEO::canonical($url);
 
         $this->assertStringContainsString(
-            "<link rel=\"canonical\" href=\"$url\">",
+            "<link rel=\"canonical\" href=\"{$url}\">",
             SemanticSEO::render()
         );
     }
@@ -99,7 +99,7 @@ class MetaTagsTests extends TestCase
         $url = URL::current();
 
         $this->assertStringContainsString(
-            "<link rel=\"canonical\" href=\"$url\">",
+            "<link rel=\"canonical\" href=\"{$url}\">",
             SemanticSEO::render()
         );
     }
@@ -114,13 +114,13 @@ class MetaTagsTests extends TestCase
     public function test_render_twitter()
     {
         $card = 'summary';
-        $creator = '@' . $this->faker->word;
+        $creator = '@'.$this->faker->word;
 
-        SemanticSEO::twitter(compact('card', 'creator'));
+        SemanticSEO::twitter(['card' => $card, 'creator' => $creator]);
 
         $html = SemanticSEO::render();
-        $this->assertStringContainsString("<meta name=\"twitter:card\" content=\"$card\">", $html);
-        $this->assertStringContainsString("<meta name=\"twitter:creator\" content=\"$creator\">", $html);
+        $this->assertStringContainsString("<meta name=\"twitter:card\" content=\"{$card}\">", $html);
+        $this->assertStringContainsString("<meta name=\"twitter:creator\" content=\"{$creator}\">", $html);
     }
 
     public function test_render_open_graph()
@@ -128,10 +128,10 @@ class MetaTagsTests extends TestCase
         $title = $this->faker->sentence;
         $url = $this->faker->url;
 
-        SemanticSEO::openGraph(compact('title', 'url'));
+        SemanticSEO::openGraph(['title' => $title, 'url' => $url]);
 
         $html = SemanticSEO::render();
-        $this->assertStringContainsString("<meta property=\"og:title\" content=\"$title\">", $html);
-        $this->assertStringContainsString("<meta property=\"og:url\" content=\"$url\">", $html);
+        $this->assertStringContainsString("<meta property=\"og:title\" content=\"{$title}\">", $html);
+        $this->assertStringContainsString("<meta property=\"og:url\" content=\"{$url}\">", $html);
     }
 }

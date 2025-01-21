@@ -2,6 +2,4 @@
 
 namespace NoelDeMartin\SemanticSEO\Types;
 
-class ImageObject extends CreativeWork
-{
-}
+class ImageObject extends CreativeWork {}

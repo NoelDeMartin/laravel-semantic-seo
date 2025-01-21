@@ -1,4 +1,4 @@
-# Laravel Semantic SEO [![Build Status](https://semaphoreci.com/api/v1/noeldemartin/laravel-semantic-seo/branches/master/badge.svg)](https://semaphoreci.com/noeldemartin/laravel-semantic-seo)
+# Laravel Semantic SEO ![CI](https://github.com/noeldemartin/laravel-semantic-seo/actions/workflows/ci.yml/badge.svg)
 
 Use this package to define Semantic SEO information through meta tags and structure data types.
 
@@ -9,10 +9,6 @@ Install using composer:
 ```
 composer require noeldemartin/laravel-semantic-seo
 ```
-
-The package will be automatically loaded using Laravel's [package discovery](https://laravel.com/docs/5.6/packages#package-discovery).
-
-(If you're using a Laravel version before 6.0, run `composer require noeldemartin/laravel-semantic-seo:0.0.1` instead)
 
 ## Usage
 

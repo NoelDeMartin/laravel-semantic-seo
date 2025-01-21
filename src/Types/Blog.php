@@ -2,6 +2,4 @@
 
 namespace NoelDeMartin\SemanticSEO\Types;
 
-class Blog extends WebSite
-{
-}
+class Blog extends WebSite {}

@@ -2,6 +2,4 @@
 
 namespace NoelDeMartin\SemanticSEO\Types;
 
-class CollectionPage extends CreativeWork
-{
-}
+class CollectionPage extends CreativeWork {}

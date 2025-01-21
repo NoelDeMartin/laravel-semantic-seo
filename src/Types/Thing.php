@@ -2,11 +2,12 @@
 
 namespace NoelDeMartin\SemanticSEO\Types;
 
-use DateTime;
 use BadMethodCallException;
-use Illuminate\Support\Str;
+use DateTime;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 use NoelDeMartin\SemanticSEO\SemanticSEO;
 use NoelDeMartin\SemanticSEO\Types\Concerns\GetsFormattedAttributes;
 
@@ -14,33 +15,33 @@ class Thing
 {
     use GetsFormattedAttributes;
 
-    protected $attributes = [];
+    protected array $attributes = [];
 
-    protected $attributeDefinitions = [];
+    protected array $attributeDefinitions = [];
 
     public function __construct()
     {
         $this->attributeDefinitions = $this->getAttributeDefinitions();
     }
 
-    public function hasAttribute($name)
+    public function hasAttribute(string $name): bool
     {
         return array_key_exists($name, $this->attributes);
     }
 
-    public function getAttribute($name)
+    public function getAttribute(string $name): mixed
     {
         return $this->hasAttribute($name) ? $this->attributes[$name] : null;
     }
 
-    public function setAttribute($name, $value)
+    public function setAttribute(string $name, mixed $value): self
     {
         $this->attributes[$name] = $this->castAttribute($name, $value);
 
         return $this;
     }
 
-    public function setAttributes($attributes)
+    public function setAttributes(array $attributes): self
     {
         foreach ($attributes as $name => $value) {
             $this->setAttribute($name, $value);
@@ -49,7 +50,7 @@ class Thing
         return $this;
     }
 
-    public function beforeRender(SemanticSEO $seo)
+    public function beforeRender(SemanticSEO $seo): void
     {
         $seo->meta(
             $this->withoutEmptyValues([
@@ -85,7 +86,7 @@ class Thing
         );
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         $attributes = $this->withoutEmptyValues(
             $this->convertValues($this->attributes)
@@ -96,15 +97,15 @@ class Thing
         ]);
     }
 
-    protected function convertValues($attributes)
+    protected function convertValues(array $attributes): array
     {
         return array_map(
             function ($value) {
                 if ($value instanceof Thing) {
                     return $value->toArray();
-                } else if ($value instanceof Carbon) {
+                } elseif ($value instanceof Carbon) {
                     return $value->toISO8601String();
-                } else if (is_array($value)) {
+                } elseif (is_array($value)) {
                     return $this->convertValues($value);
                 } else {
                     return $value;
@@ -114,12 +115,12 @@ class Thing
         );
     }
 
-    protected function withoutEmptyValues($values)
+    protected function withoutEmptyValues(array $values): array
     {
         $cleanValues = [];
 
         foreach ($values as $key => $value) {
-            if (!is_null($value)) {
+            if (! is_null($value)) {
                 $cleanValues[$key] = $value;
             }
         }
@@ -127,15 +128,15 @@ class Thing
         return $cleanValues;
     }
 
-    protected function castAttribute($name, $values)
+    protected function castAttribute(string $name, mixed $values): mixed
     {
         $types = $this->attributeDefinitions[$name];
-        if (!is_array($types)) {
+        if (! is_array($types)) {
             $types = [$types];
         }
 
         $originalArray = is_array($values);
-        if (!$originalArray) {
+        if (! $originalArray) {
             $values = [$values];
         }
 
@@ -148,11 +149,11 @@ class Thing
                 }
             }
 
-            if (!$typesMatch[$i]) {
+            if (! $typesMatch[$i]) {
                 foreach ($types as $type) {
                     $castedValue = $this->castValue($type, $value);
 
-                    if (!is_null($castedValue)) {
+                    if (! is_null($castedValue)) {
                         $values[$i] = $castedValue;
                         $typesMatch[$i] = true;
                         break;
@@ -168,7 +169,7 @@ class Thing
         }
     }
 
-    protected function isType($type, $value)
+    protected function isType(string $type, mixed $value): bool
     {
         switch ($type) {
             case 'text':
@@ -195,7 +196,7 @@ class Thing
         }
     }
 
-    protected function castValue($type, $value)
+    protected function castValue(string $type, mixed $value): mixed
     {
         try {
             $castedValue = null;
@@ -222,12 +223,12 @@ class Thing
             }
 
             return $this->isType($type, $castedValue) ? $castedValue : null;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }
 
-    protected function getAttributeDefinitions()
+    protected function getAttributeDefinitions(): array
     {
         return [
             'name' => 'text',
@@ -239,12 +240,12 @@ class Thing
         ];
     }
 
-    protected function getType()
+    protected function getType(): string
     {
         return class_basename($this);
     }
 
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters): self
     {
         if (array_key_exists($method, $this->attributeDefinitions)) {
             $this->setAttribute($method, ...$parameters);

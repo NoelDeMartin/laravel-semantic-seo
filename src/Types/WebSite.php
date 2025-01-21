@@ -2,6 +2,4 @@
 
 namespace NoelDeMartin\SemanticSEO\Types;
 
-class WebSite extends CreativeWork
-{
-}
+class WebSite extends CreativeWork {}

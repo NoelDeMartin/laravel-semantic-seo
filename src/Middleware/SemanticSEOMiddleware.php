@@ -3,18 +3,12 @@
 namespace NoelDeMartin\SemanticSEO\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 use NoelDeMartin\SemanticSEO\Support\Facades\SemanticSEO;
 
 class SemanticSEOMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
-    public function handle($request, Closure $next, $action)
+    public function handle(Request $request, Closure $next, string $action): mixed
     {
         switch ($action) {
             case 'hide':

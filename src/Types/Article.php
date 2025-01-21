@@ -6,7 +6,7 @@ use NoelDeMartin\SemanticSEO\SemanticSEO;
 
 class Article extends CreativeWork
 {
-    public function beforeRender(SemanticSEO $seo)
+    public function beforeRender(SemanticSEO $seo): void
     {
         $seo->opengraph(
             [
@@ -31,7 +31,7 @@ class Article extends CreativeWork
         parent::beforeRender($seo);
     }
 
-    protected function getAttributeDefinitions()
+    protected function getAttributeDefinitions(): array
     {
         return array_merge(parent::getAttributeDefinitions(), [
             'wordCount' => 'integer',

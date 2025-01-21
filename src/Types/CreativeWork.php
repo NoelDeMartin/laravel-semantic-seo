@@ -6,7 +6,7 @@ use NoelDeMartin\SemanticSEO\SemanticSEO;
 
 class CreativeWork extends Thing
 {
-    public function beforeRender(SemanticSEO $seo)
+    public function beforeRender(SemanticSEO $seo): void
     {
         $seo->meta(
             $this->withoutEmptyValues([
@@ -25,7 +25,7 @@ class CreativeWork extends Thing
         parent::beforeRender($seo);
     }
 
-    protected function getAttributeDefinitions()
+    protected function getAttributeDefinitions(): array
     {
         return array_merge(parent::getAttributeDefinitions(), [
             'about' => Thing::class,

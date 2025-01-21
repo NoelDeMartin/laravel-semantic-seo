@@ -2,11 +2,11 @@
 
 namespace Testing;
 
-use Mockery;
 use Faker\Factory as Faker;
 use Illuminate\Container\Container;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Facade;
+use Mockery;
 use NoelDeMartin\SemanticSEO\SemanticSEO;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
@@ -14,20 +14,24 @@ class TestCase extends BaseTestCase
 {
     protected $app;
 
-    public function setUp(): void
-    {
-        $this->faker = Faker::create();
+    protected $faker;
 
+    protected function setUp(): void
+    {
+        $url = Mockery::mock(UrlGenerator::class);
+        $url->shouldReceive('current')->andReturn('http://example.com');
+
+        $this->faker = Faker::create();
         $this->app = new Container;
 
-        $this->app->singleton('semantic-seo', SemanticSEO::class);
-        $this->app->singleton('url', UrlGenerator::class);
+        $this->app->instance('url', $url);
         $this->app->instance('app', $this->app);
+        $this->app->singleton('semantic-seo', SemanticSEO::class);
 
         Facade::setFacadeApplication($this->app);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         Mockery::close();
 

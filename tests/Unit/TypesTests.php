@@ -2,15 +2,15 @@
 
 namespace Testing\Unit;
 
-use Testing\TestCase;
-use Testing\Stubs\JohnDoe;
 use Illuminate\Support\Carbon;
-use NoelDeMartin\SemanticSEO\Types\Thing;
-use NoelDeMartin\SemanticSEO\Types\Person;
-use NoelDeMartin\SemanticSEO\Types\WebSite;
-use NoelDeMartin\SemanticSEO\Types\ImageObject;
-use NoelDeMartin\SemanticSEO\Types\CreativeWork;
 use NoelDeMartin\SemanticSEO\Support\Facades\SemanticSEO;
+use NoelDeMartin\SemanticSEO\Types\CreativeWork;
+use NoelDeMartin\SemanticSEO\Types\ImageObject;
+use NoelDeMartin\SemanticSEO\Types\Person;
+use NoelDeMartin\SemanticSEO\Types\Thing;
+use NoelDeMartin\SemanticSEO\Types\WebSite;
+use Testing\Stubs\JohnDoe;
+use Testing\TestCase;
 
 class TypesTests extends TestCase
 {
@@ -26,18 +26,18 @@ class TypesTests extends TestCase
         $html = SemanticSEO::render();
 
         $this->assertStringContainsString(
-            '<script type="application/ld+json">' .
+            '<script type="application/ld+json">'.
                 json_encode([
                     '@context' => 'http://schema.org',
                     'name' => $name,
                     'description' => $description,
                     '@type' => 'Thing',
-                ]) .
+                ]).
             '</script>',
             $html
         );
-        $this->assertStringContainsString("<title>$name</title>", $html);
-        $this->assertStringContainsString("<meta name=\"description\" content=\"$description\">", $html);
+        $this->assertStringContainsString("<title>{$name}</title>", $html);
+        $this->assertStringContainsString("<meta name=\"description\" content=\"{$description}\">", $html);
     }
 
     public function test_web_site()
@@ -58,7 +58,7 @@ class TypesTests extends TestCase
         $html = SemanticSEO::render();
 
         $this->assertStringContainsString(
-            '<script type="application/ld+json">' .
+            '<script type="application/ld+json">'.
                 json_encode([
                     '@context' => 'http://schema.org',
                     'url' => $url,
@@ -67,13 +67,13 @@ class TypesTests extends TestCase
                     'description' => $description,
                     'dateCreated' => $date->toISO8601String(),
                     '@type' => 'WebSite',
-                ]) .
+                ]).
             '</script>',
             $html
         );
-        $this->assertStringContainsString("<title>$headline</title>", $html);
-        $this->assertStringContainsString("<link rel=\"canonical\" href=\"$url\">", $html);
-        $this->assertStringContainsString("<meta name=\"description\" content=\"$description\">", $html);
+        $this->assertStringContainsString("<title>{$headline}</title>", $html);
+        $this->assertStringContainsString("<link rel=\"canonical\" href=\"{$url}\">", $html);
+        $this->assertStringContainsString("<meta name=\"description\" content=\"{$description}\">", $html);
     }
 
     public function test_article()
@@ -90,7 +90,7 @@ class TypesTests extends TestCase
         $html = SemanticSEO::render();
 
         $this->assertStringContainsString(
-            '<script type="application/ld+json">' .
+            '<script type="application/ld+json">'.
                 json_encode([
                     '@context' => 'http://schema.org',
                     'wordCount' => $wordCount,
@@ -105,7 +105,7 @@ class TypesTests extends TestCase
                         '@type' => 'Person',
                     ],
                     '@type' => 'Article',
-                ]) .
+                ]).
             '</script>',
             $html
         );
@@ -113,9 +113,9 @@ class TypesTests extends TestCase
             "<meta property=\"article:published_time\" content=\"{$publishedAt->toISO8601String()}\">",
             $html
         );
-        $this->assertStringContainsString("<meta property=\"article:author\" content=\"John Doe\">", $html);
-        $this->assertStringContainsString("<meta property=\"article:tag\" content=\"foo\">", $html);
-        $this->assertStringContainsString("<meta property=\"article:tag\" content=\"bar\">", $html);
+        $this->assertStringContainsString('<meta property="article:author" content="John Doe">', $html);
+        $this->assertStringContainsString('<meta property="article:tag" content="foo">', $html);
+        $this->assertStringContainsString('<meta property="article:tag" content="bar">', $html);
     }
 
     public function test_collection_page()
@@ -133,7 +133,7 @@ class TypesTests extends TestCase
             ]);
 
         $this->assertStringContainsString(
-            '<script type="application/ld+json">' .
+            '<script type="application/ld+json">'.
                 json_encode([
                     '@context' => 'http://schema.org',
                     'hasPart' => [
@@ -147,7 +147,7 @@ class TypesTests extends TestCase
                         ],
                     ],
                     '@type' => 'CollectionPage',
-                ]) .
+                ]).
             '</script>',
             SemanticSEO::render()
         );
@@ -158,7 +158,7 @@ class TypesTests extends TestCase
         SemanticSEO::is(JohnDoe::class);
 
         $this->assertStringContainsString(
-            '<script type="application/ld+json">' .
+            '<script type="application/ld+json">'.
                 json_encode([
                     '@context' => 'http://schema.org',
                     'name' => 'John Doe',
@@ -167,7 +167,7 @@ class TypesTests extends TestCase
                         'https://github.com/JohnDoe',
                     ],
                     '@type' => 'Person',
-                ]) .
+                ]).
             '</script>',
             SemanticSEO::render()
         );
@@ -177,11 +177,11 @@ class TypesTests extends TestCase
     {
         $twitterHandle = $this->faker->word;
 
-        $creator = (new Person)->sameAs('https://twitter.com/' . $twitterHandle);
+        $creator = (new Person)->sameAs('https://twitter.com/'.$twitterHandle);
         SemanticSEO::website()->creator($creator);
 
         $this->assertStringContainsString(
-            "<meta name=\"twitter:site\" content=\"@$twitterHandle\">",
+            "<meta name=\"twitter:site\" content=\"@{$twitterHandle}\">",
             SemanticSEO::render()
         );
     }
@@ -199,10 +199,10 @@ class TypesTests extends TestCase
 
         $html = SemanticSEO::render();
 
-        $this->assertStringContainsString("<meta property=\"og:image\" content=\"$url\">", $html);
-        $this->assertStringContainsString("<meta property=\"og:image:alt\" content=\"$description\">", $html);
-        $this->assertStringContainsString("<meta name=\"twitter:image\" content=\"$url\">", $html);
-        $this->assertStringContainsString("<meta name=\"twitter:image:alt\" content=\"$description\">", $html);
+        $this->assertStringContainsString("<meta property=\"og:image\" content=\"{$url}\">", $html);
+        $this->assertStringContainsString("<meta property=\"og:image:alt\" content=\"{$description}\">", $html);
+        $this->assertStringContainsString("<meta name=\"twitter:image\" content=\"{$url}\">", $html);
+        $this->assertStringContainsString("<meta name=\"twitter:image:alt\" content=\"{$description}\">", $html);
     }
 
     public function test_disable_automatically_filled_meta()
@@ -212,7 +212,7 @@ class TypesTests extends TestCase
         SemanticSEO::meta('title', null);
         SemanticSEO::is(Thing::class)->name($name);
 
-        $this->assertStringNotContainsString("<title>$name</title>", SemanticSEO::render());
+        $this->assertStringNotContainsString("<title>{$name}</title>", SemanticSEO::render());
     }
 
     public function test_multiple_types()
@@ -221,7 +221,7 @@ class TypesTests extends TestCase
         SemanticSEO::is(WebSite::class);
 
         $this->assertStringContainsString(
-            '<script type="application/ld+json">' .
+            '<script type="application/ld+json">'.
                 json_encode([
                     '@context' => 'http://schema.org',
                     '@graph' => [
@@ -232,7 +232,7 @@ class TypesTests extends TestCase
                             '@type' => 'WebSite',
                         ],
                     ],
-                ]) .
+                ]).
             '</script>',
             SemanticSEO::render()
         );
