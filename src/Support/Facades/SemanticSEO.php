@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \NoelDeMartin\SemanticSEO\SemanticSEO hide()
- * @method static \NoelDeMartin\SemanticSEO\SemanticSEO is(string $type)
+ * @method static \NoelDeMartin\SemanticSEO\SemanticSEO is(mixed $type)
  * @method static \NoelDeMartin\SemanticSEO\SemanticSEO meta(array|string $fields, bool $override = true)
  * @method static \NoelDeMartin\SemanticSEO\SemanticSEO openGraph(array|string $fields, mixed $override = true, bool $withoutPrefix = false)
  * @method static \NoelDeMartin\SemanticSEO\SemanticSEO rss(string $url, string $title = 'RSS Feed')
